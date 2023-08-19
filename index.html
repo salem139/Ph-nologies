@@ -34,33 +34,61 @@
             z-index: 1;
         }
 
-        .leaflet-top {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        /* Styles for baselayer controls */
+        .leaflet-control-layers-toggle {
+            pointer-events: auto;
             align-items: center;
-            pointer-events: none;
+            top: 100px;
+            right: 20px;
         }
 
+        /* Styles for layer controls */
+        .leaflet-control-layers {
+            pointer-events: auto;
+            align-items: center;
+            top: 20px;
+            right: 0px;
+        }
+
+
+        /* Styles for zoom controls */
         .leaflet-control-zoom {
             pointer-events: auto;
+            align-items: center;
+            top: 20px;
+            right: 2px;
+            /* Autres styles spécifiques aux contrôles de zoom */
+            /* ... */
+        }
+
+        /* Styles for the controls container */
+        #controls-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
         }
     </style>
 </head>
 <body>
 
-    <div class="topnav">
-        <a class="propos">À propos</a>
-        <a href="Brochure.html">Je veux en savoir plus !</a>
-        <a class="tuto">Comment ça marche ?</a>
-        <a class="active" href="Carte.html">Carte</a>
-    </div>  
 
-    <div id="map"></div>
     <div class="titre">
         <strong>La phénologie des arbres urbains à Strasbourg en 2022</strong>
     </div>
 
+    <div id="main-buttons">
+        <button id="sos-btn">SOS</button>
+        <button id="peak-btn">Peak</button>
+        <button id="eos-btn">EOS</button>
+    </div>
+    
+    <div id="variation-buttons" style="display: none;">
+        <button id="s2-btn">Sentinel-2</button>
+        <button id="pnt-btn">PLANET</button>
+    </div>
+
+    <div id="map"></div>
+    
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -82,10 +110,7 @@
 
         baselayers.LIGHT.addTo(mymap);
 
-        L.control.layers(baselayers, null, {
-            collapsed: false,
-            position: 'topright'
-        }).addTo(mymap);
+        L.control.layers(baselayers, null, {position:'topright'}, {collapsed: false}).addTo(mymap);
 
         L.control.zoom({
             position: 'topright'
@@ -124,12 +149,6 @@
                 treeGeojsonLayer.addData(data);
             });
 
-        var treeControl = L.control.layers(null, { "Arbres": treeGeojsonLayer }, {
-            collapsed: false,
-            position: 'topright'
-        });
-        treeControl.addTo(mymap);
-
         var communesGeojsonLayer = L.geoJSON(null, {
             style: function (feature) {
                 return {
@@ -154,12 +173,6 @@
                 communesGeojsonLayer.addData(data);
             });
 
-        var communesControl = L.control.layers(null, { "Communes": communesGeojsonLayer }, {
-            collapsed: false,
-            position: 'topright'
-        });
-        
-        communesControl.addTo(mymap);
 
 // Charger le GeoJSON des MAPUCES et l'ajouter à la carte
 var MAPUCEGeojsonLayer = L.geoJSON(null, {
@@ -211,11 +224,9 @@ fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/MAPUCE.geojso
     });
 
 // Ajouter un bouton pour afficher/masquer la couche MAPUCES
-var MAPUCEControl = L.control.layers(null, { "MAPUCE": MAPUCEGeojsonLayer }, {
-    collapsed: false,
-    position: 'topright'
-});
-MAPUCEControl.addTo(mymap);
+
+
+
 
 var legendLCZ = {
     1: { color: '#8f0f0f', name: 'Compact high-rise' },
@@ -236,8 +247,65 @@ var legendLCZ = {
 };
 
 
+var allLayers = {
+    "Arbres": treeGeojsonLayer,
+    "Communes": communesGeojsonLayer,
+    "MAPUCE": MAPUCEGeojsonLayer
+};
+
+var couche = L.control.layers(null, allLayers, {
+    collapsed: false,
+    position: 'topright'
+});
+couche.addTo(mymap);
+MAPUCEGeojsonLayer.remove();
+
+
+// Récupérer les données GeoJSON de la couche BD_arbre
+var treeData = treeGeojsonLayer.toGeoJSON();
+
+var SOS_S2 = treeData.features.map(feature => feature.properties.SOS);
+var Peak_S2 = treeData.features.map(feature => feature.properties.Peak);
+var EOS_S2 = treeData.features.map(feature => feature.properties.EOS);
+var SOS_PNT = treeData.features.map(feature => feature.properties.SOS_PNT);
+var Peak_PNT = treeData.features.map(feature => feature.properties.Peak_PNT);
+var EOS_PNT = treeData.features.map(feature => feature.properties.EOS_PNT);
+
+var mainButtons = document.getElementById("main-buttons");
+var variationButtons = document.getElementById("variation-buttons");
+
+var sosBtn = document.getElementById("sos-btn");
+var peakBtn = document.getElementById("peak-btn");
+var eosBtn = document.getElementById("eos-btn");
+var s2Btn = document.getElementById("s2-btn"); 
+var pntBtn = document.getElementById("pnt-btn"); 
+
+sosBtn.addEventListener("click", function () {
+    // Afficher les boutons de variation
+    variationButtons.style.display = "block";
+});
+
+peakBtn.addEventListener("click", function () {
+    // Afficher les boutons de variation
+    variationButtons.style.display = "block";
+});
+
+eosBtn.addEventListener("click", function () {
+    // Afficher les boutons de variation
+    variationButtons.style.display = "block";
+});
+
+s2Btn.addEventListener("click", function () {
+    // Mettre à jour le style ou l'affichage des arbres en fonction de variables S2
+    // Par exemple : treeGeojsonLayer.setStyle(...);
+});
+
+pntBtn.addEventListener("click", function () {
+    // Mettre à jour le style ou l'affichage des arbres en fonction de variables PNT
+    // Par exemple : treeGeojsonLayer.setStyle(...);
+});
+
 </script>
 
 </body>
 </html>
-
