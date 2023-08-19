@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"> 
+    <title>Phénologie des arbres strabourgeois</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0; 
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .titre {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px;
+            background-color: rgba(122, 126, 123, 0.95);
+            font-family: Calibri, sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: rgb(15, 14, 14);
+            z-index: 1;
+        }
+
+        /* Styles for baselayer controls */
+        .leaflet-control-layers-toggle {
+            pointer-events: auto;
+            align-items: center;
+            top: 100px;
+            right: 20px;
+        }
+
+        /* Styles for layer controls */
+        .leaflet-control-layers {
+            pointer-events: auto;
+            align-items: center;
+            top: 20px;
+            right: 0px;
+        }
+
+
+        /* Styles for zoom controls */
+        .leaflet-control-zoom {
+            pointer-events: auto;
+            align-items: center;
+            top: 20px;
+            right: 2px;
+            /* Autres styles spécifiques aux contrôles de zoom */
+            /* ... */
+        }
+
+        /* Styles for the controls container */
+        #controls-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+    </style>
+</head>
+<body>
+
+
+    <div class="titre">
+        <strong>La phénologie des arbres urbains à Strasbourg en 2022</strong>
+    </div>
+
+    <div id="main-buttons">
+        <button id="sos-btn">SOS</button>
+        <button id="peak-btn">Peak</button>
+        <button id="eos-btn">EOS</button>
+    </div>
+    
+    <div id="variation-buttons" style="display: none;">
+        <button id="s2-btn">Sentinel-2</button>
+        <button id="pnt-btn">PLANET</button>
+    </div>
+
+    <div id="map"></div>
+    
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        var mymap = L.map('map', {
+            center: [48.58, 7.74],
+            zoom: 14,
+            minZoom: 2,
+            zoomControl: false
+        });
+
+        var baselayers = {
+            LIGHT: L.tileLayer('https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=OFCl0kpcDyvePBetMgGBXyAYT2B8U7iQmzPMLToEsUT9W1i6Q7WdkHJ3CGUE0o9e', { attribution: 'Guillot', minZoom: 10 }),
+            DARK: L.tileLayer('https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=OFCl0kpcDyvePBetMgGBXyAYT2B8U7iQmzPMLToEsUT9W1i6Q7WdkHJ3CGUE0o9e', { attribution: 'Guillot', minZoom: 10 }),
+            TOPOGRAPHY: L.tileLayer('https://tile.jawg.io/jawg-terrain/{z}/{x}/{y}{r}.png?access-token=OFCl0kpcDyvePBetMgGBXyAYT2B8U7iQmzPMLToEsUT9W1i6Q7WdkHJ3CGUE0o9e', { attribution: 'Guillot', minZoom: 10 }),
+            SATELLITE: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Guillot', minZoom: 10 })
+        };
+
+        baselayers.LIGHT.addTo(mymap);
+
+        L.control.layers(baselayers, null, {position:'topright'}, {collapsed: false}).addTo(mymap);
+
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(mymap);
+
+        L.control.scale({
+            position: 'bottomright'
+        }).addTo(mymap);
+
+        var treeGeojsonLayer = L.geoJSON(null, {
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, {
+                    radius: 2,
+                    fillColor: 'green',
+                    color: 'green',
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 1
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                var popupContent = "<p>";
+                for (var key in feature.properties) {
+                    if (feature.properties.hasOwnProperty(key)) {
+                        popupContent += "<strong>" + key + ":</strong> " + feature.properties[key] + "<br>";
+                    }
+                }
+                popupContent += "</p>";
+                layer.bindPopup(popupContent);
+            }
+        }).addTo(mymap);
+
+        fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/BD_arbre.geojson')
+            .then(response => response.json())
+            .then(data => {
+                treeGeojsonLayer.addData(data);
+            });
+
+        var communesGeojsonLayer = L.geoJSON(null, {
+            style: function (feature) {
+                return {
+                    fillColor: 'none',
+                    color: 'black',
+                    weight: 2,
+                    dashArray: '5,5'
+                };
+            },
+            onEachFeature: function (feature, layer) {
+                var popupContent = "<p><strong>Commune:</strong> " + feature.properties.nom + "<br>" +
+                                "<strong>Département:</strong> " + feature.properties.num_dept + "<br>" +
+                                "<strong>Mise à jour:</strong> " + feature.properties.date_exprt + "<br>" +
+                                "<strong>Source:</strong> " + feature.properties.source + "</p>";
+                layer.bindPopup(popupContent);
+            }
+        }).addTo(mymap);
+
+        fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/limites_de_communes.geojson')
+            .then(response => response.json())
+            .then(data => {
+                communesGeojsonLayer.addData(data);
+            });
+
+
+// Charger le GeoJSON des MAPUCES et l'ajouter à la carte
+var MAPUCEGeojsonLayer = L.geoJSON(null, {
+    style: function (feature) {
+        var code = feature.properties.LCZ_MPCE;
+        var style = {
+            fillColor: legendLCZ[code].color,
+            fillOpacity: 0.3,
+            color: 'black',
+            weight: 2
+        };
+        return style;
+    },
+    onEachFeature: function (feature, layer) {
+        var code = feature.properties.LCZ_MPCE;
+
+        var popupContent = "<p>";
+
+        if (feature.properties.hasOwnProperty('id')) {
+            popupContent += "<strong>ID:</strong> " + feature.properties.id + "<br>";
+        }
+
+        if (feature.properties.hasOwnProperty('LCZ_MPCE')) {
+            popupContent += "<strong>LCZ:</strong> " + legendLCZ[code].name + "<br>";
+        }
+
+        for (var key in feature.properties) {
+            if (key !== 'id' && feature.properties.hasOwnProperty(key)) {
+                if (key === 'area_MPCE') {
+                    var areaInSquareMeters = feature.properties[key];
+                    var areaInSquareKilometers = (areaInSquareMeters / 1000000).toFixed(2); // Conversion en km²
+                    popupContent += "<strong>Surface:</strong> " + areaInSquareKilometers + " km²<br>";
+                } else if (key !== 'LCZ_MPCE') {
+                    popupContent += "<strong>" + key + ":</strong> " + feature.properties[key] + "<br>";
+                }
+            }
+        }
+
+        popupContent += "</p>";
+        layer.bindPopup(popupContent);
+    }
+}).addTo(mymap);
+
+// Charger le GeoJSON depuis un fichier externe pour les MAPUCES en utilisant crossorigin.me
+fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/MAPUCE.geojson')
+    .then(response => response.json())
+    .then(data => {
+        MAPUCEGeojsonLayer.addData(data);
+    });
+
+// Ajouter un bouton pour afficher/masquer la couche MAPUCES
+
+
+
+
+var legendLCZ = {
+    1: { color: '#8f0f0f', name: 'Compact high-rise' },
+    2: { color: '#e31a1c', name: 'Compact mid-rise' },
+    3: { color: '#f25e60', name: 'Compact low-rise' },
+    4: { color: '#d15c0e', name: 'Open high-rise' },
+    5: { color: '#ff7f00', name: 'Open mid-rise' },
+    6: { color: '#f2b75e', name: 'Open low-rise' },
+    7: { color: '#ecdf26', name: 'Lightweight low-rise' },
+    8: { color: '#dccccc', name: 'Large low-rise' },
+    9: { color: '#d4d69d', name: 'Sparsely built' },
+    101: { color: '#126d27', name: 'Dense trees' },
+    102: { color: '#26a42a', name: 'Scattered trees' },
+    104: { color: '#dcff6b', name: 'Low plants' },
+    105: { color: '#000000', name: 'Bare rock or paved' },
+    107: { color: '#a6cee3', name: 'Water' },
+    // ... Ajoutez les autres codes et leurs propriétés ici
+};
+
+
+var allLayers = {
+    "Arbres": treeGeojsonLayer,
+    "Communes": communesGeojsonLayer,
+    "MAPUCE": MAPUCEGeojsonLayer
+};
+
+var couche = L.control.layers(null, allLayers, {
+    collapsed: false,
+    position: 'topright'
+});
+couche.addTo(mymap);
+MAPUCEGeojsonLayer.remove();
+
+
+// Récupérer les données GeoJSON de la couche BD_arbre
+var treeData = treeGeojsonLayer.toGeoJSON();
+
+var SOS_S2 = treeData.features.map(feature => feature.properties.SOS);
+var Peak_S2 = treeData.features.map(feature => feature.properties.Peak);
+var EOS_S2 = treeData.features.map(feature => feature.properties.EOS);
+var SOS_PNT = treeData.features.map(feature => feature.properties.SOS_PNT);
+var Peak_PNT = treeData.features.map(feature => feature.properties.Peak_PNT);
+var EOS_PNT = treeData.features.map(feature => feature.properties.EOS_PNT);
+
+var mainButtons = document.getElementById("main-buttons");
+var variationButtons = document.getElementById("variation-buttons");
+
+var sosBtn = document.getElementById("sos-btn");
+var peakBtn = document.getElementById("peak-btn");
+var eosBtn = document.getElementById("eos-btn");
+var s2Btn = document.getElementById("s2-btn"); 
+var pntBtn = document.getElementById("pnt-btn"); 
+
+sosBtn.addEventListener("click", function () {
+    // Afficher les boutons de variation
+    variationButtons.style.display = "block";
+});
+
+peakBtn.addEventListener("click", function () {
+    // Afficher les boutons de variation
+    variationButtons.style.display = "block";
+});
+
+eosBtn.addEventListener("click", function () {
+    // Afficher les boutons de variation
+    variationButtons.style.display = "block";
+});
+
+s2Btn.addEventListener("click", function () {
+    // Mettre à jour le style ou l'affichage des arbres en fonction de variables S2
+    // Par exemple : treeGeojsonLayer.setStyle(...);
+});
+
+pntBtn.addEventListener("click", function () {
+    // Mettre à jour le style ou l'affichage des arbres en fonction de variables PNT
+    // Par exemple : treeGeojsonLayer.setStyle(...);
+});
+
+</script>
+
+</body>
+</html>
