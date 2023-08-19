@@ -140,7 +140,7 @@ var communesGeojsonLayer = L.geoJSON(null, {
 }).addTo(mymap);
 
 // Charger le GeoJSON depuis un fichier externe pour les limites de communes en utilisant crossorigin.me
-fetch('https://crossorigin.me/https://github.com/salem139/Ph-nologies/raw/main/limites_de_communes.geojson')
+fetch('https://github.com/salem139/Ph-nologies/blob/main/limites_de_communes.geojson')
     .then(response => response.json())
     .then(data => {
         communesGeojsonLayer.addData(data);
