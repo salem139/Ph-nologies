@@ -118,7 +118,7 @@ var treeGeojsonLayer = L.geoJSON(null, {
 }).addTo(mymap);
 
 // Charger le GeoJSON depuis un fichier externe pour les arbres en utilisant crossorigin.me
-fetch('https://crossorigin.me/https://github.com/salem139/Ph-nologies/raw/main/BD_arbre_final.json')
+fetch('https://github.com/salem139/Ph-nologies/blob/main/BD_arbre_final.json')
     .then(response => response.json())
     .then(data => {
         treeGeojsonLayer.addData(data);
@@ -146,6 +146,27 @@ fetch('https://github.com/salem139/Ph-nologies/blob/main/limites_de_communes.geo
         communesGeojsonLayer.addData(data);
     });
 
+// Charger le GeoJSON des limites de communes et l'ajouter à la carte
+var MAPUCEGeojsonLayer = L.geoJSON(null, {
+    style: function (feature) {
+        return {
+            fillColor: 'blue',
+            fillOpacity: 0.3,
+            color: 'black',
+            weight: 2
+        };
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup('<p>Informations : ' + feature.properties.info + '</p>');
+    }
+}).addTo(mymap);
+
+// Charger le GeoJSON depuis un fichier externe pour les MAPUCE en utilisant crossorigin.me
+fetch('https://github.com/salem139/Ph-nologies/blob/main/limites_de_communes.geojson')
+    .then(response => response.json())
+    .then(data => {
+        communesGeojsonLayer.addData(data);
+    });
 /*
         // Ajout de la fonctionnalité permettant d'afficher le tutoriel lors du clic sur le bouton "Comment ça marche ?".
         $('.tuto').on('click', function (e) {
