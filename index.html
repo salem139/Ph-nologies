@@ -129,7 +129,7 @@ var communesGeojsonLayer = L.geoJSON(null, {
     style: function (feature) {
         return {
             fillColor: 'blue',
-            fillOpacity: 0.3,
+            fillOpacity: 0.2,
             color: 'black',
             weight: 2
         };
@@ -146,7 +146,14 @@ fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/limites_de_co
         communesGeojsonLayer.addData(data);
     });
 
-// Charger le GeoJSON des limites de communes et l'ajouter à la carte
+// Ajouter un bouton pour afficher/masquer la couche des limites de communes
+var communesControl = L.control.layers(null, { "Limites de communes": communesGeojsonLayer }, {
+    collapsed: false,
+    position: 'topright'
+});
+communesControl.addTo(mymap);
+
+// Charger le GeoJSON des MAPUCES et l'ajouter à la carte
 var MAPUCEGeojsonLayer = L.geoJSON(null, {
     style: function (feature) {
         return {
@@ -167,6 +174,14 @@ fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/MAPUCE.geojso
     .then(data => {
         MAPUCEGeojsonLayer.addData(data);
     });
+
+// Ajouter un bouton pour afficher/masquer la couche MAPUCES
+var MAPUCEControl = L.control.layers(null, { "MAPUCE": MAPUCEGeojsonLayer }, {
+    collapsed: false,
+    position: 'topright'
+});
+MAPUCEControl.addTo(mymap);
+        
 /*
         // Ajout de la fonctionnalité permettant d'afficher le tutoriel lors du clic sur le bouton "Comment ça marche ?".
         $('.tuto').on('click', function (e) {
