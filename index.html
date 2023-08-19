@@ -118,7 +118,7 @@ var treeGeojsonLayer = L.geoJSON(null, {
 }).addTo(mymap);
 
 // Charger le GeoJSON depuis un fichier externe pour les arbres en utilisant crossorigin.me
-fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/BD_arbre_final.json')
+fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/BD_arbre.geojson')
     .then(response => response.json())
     .then(data => {
         treeGeojsonLayer.addData(data);
