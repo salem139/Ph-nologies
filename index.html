@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Phénologie des arbres strabourgeois</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
+
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .titre {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px;
+            background-color: rgba(13, 79, 35, 0.85); /* Fond vert très foncé avec transparence */
+            font-family: Calibri, sans-serif; /* Police Calibri */
+            font-size: 24px; /* Taille de police plus grande */
+            font-weight: bold; /* Police en gras */
+            color: rgb(242, 234, 234); /* Couleur du texte */
+            z-index: 1;
+        
+        }
+        
+       /* CSS pour centrer les boutons de zoom horizontalement et verticalement par rapport à l'encadré des fonds de carte */
+        .leaflet-top {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none; /* Éviter d'interférer avec les interactions de la carte */
+        }
+
+        .leaflet-control-zoom {
+            pointer-events: auto; /* Rétablir les interactions pour les boutons de zoom */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="topnav">
+        <a class="propos">À propos</a>
+        <a href="Brochure.html">Je veux en savoir plus !</a>
+        <a class="tuto">Comment ca marche ?</a>
+        <a class="active" href="Carte.html">Carte</a>
+    </div>  
+
+
+    <div id="map"></div> <!-- Div pour la carte -->
+    <div class="titre">
+        <strong>La phénologie des arbres urbains à Strasbourg en 2022</strong>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        var mymap = L.map('map', {
+            center: [48.58, 7.74],
+            zoom: 14, // Zoom initial
+            minZoom: 2, // Zoom minimal augmenté
+            zoomControl: false // Désactivation du zoom par défaut
+        });
+
+        var baselayers = {
+            LIGHT: L.tileLayer('https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=OFCl0kpcDyvePBetMgGBXyAYT2B8U7iQmzPMLToEsUT9W1i6Q7WdkHJ3CGUE0o9e', { attribution: 'Guillot', minZoom: 10 }),
+            DARK: L.tileLayer('https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=OFCl0kpcDyvePBetMgGBXyAYT2B8U7iQmzPMLToEsUT9W1i6Q7WdkHJ3CGUE0o9e', { attribution: 'Guillot', minZoom: 10 }),
+            TOPOGRAPHY: L.tileLayer('https://tile.jawg.io/jawg-terrain/{z}/{x}/{y}{r}.png?access-token=OFCl0kpcDyvePBetMgGBXyAYT2B8U7iQmzPMLToEsUT9W1i6Q7WdkHJ3CGUE0o9e', { attribution: 'Guillot', minZoom: 10 }),
+            SATELLITE: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Guillot', minZoom: 10 })
+        };
+
+        baselayers.LIGHT.addTo(mymap);
+
+        // Ajout du bouton de changement de fond de carte
+        L.control.layers(baselayers, null, {
+            collapsed: false, // Ouvrir par défaut
+            position: 'topright' // Position en haut à droite
+        }).addTo(mymap);
+
+        // Ajout des boutons de zoom personnalisés en haut à droite
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(mymap);
+
+        // Ajout de la barre d'échelle.
+        L.control.scale({
+            position: 'bottomright'
+        }).addTo(mymap);
+
+// Charger le GeoJSON des arbres et l'ajouter à la carte
+var treeGeojsonLayer = L.geoJSON(null, {
+    style: function (feature) {
+        return {
+            fillColor: 'green',
+            fillOpacity: 0.5,
+            color: 'black',
+            weight: 2
+        };
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup('<p>Informations : ' + feature.properties.info + '</p>');
+    }
+}).addTo(mymap);
+
+// Charger le GeoJSON depuis un fichier externe pour les arbres
+fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/BD_arbre_final.json')
+    .then(response => response.json())
+    .then(data => {
+        treeGeojsonLayer.addData(data);
+    });
+
+// Charger le GeoJSON des limites de communes et l'ajouter à la carte
+var communesGeojsonLayer = L.geoJSON(null, {
+    style: function (feature) {
+        return {
+            fillColor: 'blue',
+            fillOpacity: 0.3,
+            color: 'black',
+            weight: 2
+        };
+    },
+    onEachFeature: function (feature, layer) {
+        layer.bindPopup('<p>Informations : ' + feature.properties.info + '</p>');
+    }
+}).addTo(mymap);
+
+// Charger le GeoJSON depuis un fichier externe pour les limites de communes
+fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/limites_de_communes.geojson')
+    .then(response => response.json())
+    .then(data => {
+        communesGeojsonLayer.addData(data);
+    });
+
+/*
+        // Ajout de la fonctionnalité permettant d'afficher le tutoriel lors du clic sur le bouton "Comment ça marche ?".
+        $('.tuto').on('click', function (e) {
+            e.preventDefault();
+            var self = $(this);
+
+            // Paramétrage du contenu de notre tutoriel.
+            Swal.mixin({
+                confirmButtonText: 'Étape suivante &rarr;',
+                showCancelButton: true,
+                progressSteps: ['1', '2', '3', '4'],
+                reverseButtons: true,
+                cancelButtonText: "Quitter"
+            }).queue([
+                { title: "Tutoriel de l'interface", html: "Cette interface donne à l'utilisateur à la fois la possibilité de visualiser les effets d'îlot de chaleur urbain au sein de la métropole de Strasbourg, mais également de les corréler à l'occupation des sols." },
+                { title: 'Prise en main', html: "Il est possible de se déplacer sur la carte, de modifier le zoom, ou encore de changer le fond de la carte." },
+                { title: "Visualisation des données", html: "Au survol de chaque entité spatiale, des informations générales s'afficheront de manière dynamique dans l'info-bulle située en haut à droite de l'écran." },
+                { title: "Visualisation de données avancées", html: "En cliquant sur une entité, il vous est possible d'ouvrir une fenêtre contenant des informations plus détaillées sur l'occupation de ses sols." },
+            ]).then((result) => {
+                if (result.value) {
+                    Swal.fire({
+                        title: 'Informations complémentaires',
+                        html: "Pour plus de renseignements, veuillez vous référer aux sections '<u>Comment ça marche ?</u>' ainsi que '<u>À propos</u>'.",
+                        confirmButtonText: "C\'est parti !"
+                    }).then(() => {
+                        window.location.href = self.attr('href'); // Utilisation de window.location.href
+                    });
+                }
+            });
+        });
+
+        // Ajout de la fonctionnalité permettant d'afficher l'encart "À propos" lors du clic sur le bouton "À propos".
+        $('.propos').on('click', function (e) {
+            e.preventDefault();
+            var self = $(this);
+
+            // Paramétrage du contenu de notre encart "À propos".
+            Swal.fire({
+                title: '<strong>//////:</strong>',
+                html: "<br> ...</i>",
+            });
+        });
+        */
+    </script>
+
+</body>
+</html>
