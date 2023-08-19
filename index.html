@@ -176,23 +176,29 @@ var MAPUCEGeojsonLayer = L.geoJSON(null, {
     onEachFeature: function (feature, layer) {
         var code = feature.properties.LCZ_MPCE;
 
-        var popupContent = "<div class='popup-content'>";
+        var popupContent = "<p>";
+
+        if (feature.properties.hasOwnProperty('id')) {
+            popupContent += "<strong>ID:</strong> " + feature.properties.id + "<br>";
+        }
+
+        if (feature.properties.hasOwnProperty('LCZ_MPCE')) {
+            popupContent += "<strong>LCZ:</strong> " + legendLCZ[code].name + "<br>";
+        }
 
         for (var key in feature.properties) {
-            if (key !== 'id' && key !== 'LCZ_MPCE' && feature.properties.hasOwnProperty(key)) {
+            if (key !== 'id' && feature.properties.hasOwnProperty(key)) {
                 if (key === 'area_MPCE') {
                     var areaInSquareMeters = feature.properties[key];
                     var areaInSquareKilometers = (areaInSquareMeters / 1000000).toFixed(2); // Conversion en km²
-                    popupContent += "<div><strong>Surface:</strong> " + areaInSquareKilometers + " km²</div>";
-                } else if (key === 'name') {
-                    popupContent += "<div><strong>Nom:</strong> " + legendLCZ[feature.properties['LCZ_MPCE']].name + "</div>";
-                } else {
-                    popupContent += "<div><strong>" + key + ":</strong> " + feature.properties[key] + "</div>";
+                    popupContent += "<strong>Surface:</strong> " + areaInSquareKilometers + " km²<br>";
+                } else if (key !== 'LCZ_MPCE') {
+                    popupContent += "<strong>" + key + ":</strong> " + feature.properties[key] + "<br>";
                 }
             }
         }
 
-        popupContent += "</div>";
+        popupContent += "</p>";
         layer.bindPopup(popupContent);
     }
 }).addTo(mymap);
@@ -228,7 +234,6 @@ var legendLCZ = {
     107: { color: '#a6cee3', name: 'Water' },
     // ... Ajoutez les autres codes et leurs propriétés ici
 };
-
 
 
 </script>
