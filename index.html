@@ -162,7 +162,7 @@ var MAPUCEGeojsonLayer = L.geoJSON(null, {
 }).addTo(mymap);
 
 // Charger le GeoJSON depuis un fichier externe pour les MAPUCE en utilisant crossorigin.me
-fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/LCZ_EMS_Mapuce_OSM2021.json')
+fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/MAPUCE.geojson')
     .then(response => response.json())
     .then(data => {
         communesGeojsonLayer.addData(data);
