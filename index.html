@@ -165,7 +165,7 @@ var MAPUCEGeojsonLayer = L.geoJSON(null, {
 fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/MAPUCE.geojson')
     .then(response => response.json())
     .then(data => {
-        communesGeojsonLayer.addData(data);
+        MAPUCEGeojsonLayer.addData(data);
     });
 /*
         // Ajout de la fonctionnalité permettant d'afficher le tutoriel lors du clic sur le bouton "Comment ça marche ?".
