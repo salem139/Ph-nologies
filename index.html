@@ -61,12 +61,37 @@
             /* ... */
         }
 
-        /* Styles for the controls container */
-        #controls-container {
+        .lineaire-simple {
+            background-color: white;
+            padding: 10px;
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 220px; /* Ajustez la position verticale */
+            right: 2px; /* Ajustez la position horizontale */
+            z-index: 1000;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 170px; /* Ajustez la largeur */
         }
+
+        .legend-icon {
+            display: inline-block;
+            width: 10px;
+            height: 8px;
+            margin-right: 5px;
+            vertical-align: middle; /* Centrer verticalement les icônes */
+        }
+
+        .legend-text {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .legend-header {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px; /* Espacement en bas */
+        }
+
     </style>
 </head>
 <body>
@@ -76,24 +101,17 @@
         <strong>La phénologie des arbres urbains à Strasbourg en 2022</strong>
     </div>
 
-    <div id="main-buttons">
-        <button id="sos-btn">SOS</button>
-        <button id="peak-btn">Peak</button>
-        <button id="eos-btn">EOS</button>
-    </div>
-    
-    <div id="variation-buttons" style="display: none;">
-        <button id="s2-btn">Sentinel-2</button>
-        <button id="pnt-btn">PLANET</button>
-    </div>
-
     <div id="map"></div>
+
     
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
 
     <script>
+
         var mymap = L.map('map', {
             center: [48.58, 7.74],
             zoom: 14,
@@ -120,34 +138,64 @@
             position: 'bottomright'
         }).addTo(mymap);
 
-        var treeGeojsonLayer = L.geoJSON(null, {
-            pointToLayer: function (feature, latlng) {
-                return L.circleMarker(latlng, {
-                    radius: 2,
-                    fillColor: 'green',
-                    color: 'green',
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 1
-                });
-            },
-            onEachFeature: function (feature, layer) {
-                var popupContent = "<p>";
-                for (var key in feature.properties) {
-                    if (feature.properties.hasOwnProperty(key)) {
-                        popupContent += "<strong>" + key + ":</strong> " + feature.properties[key] + "<br>";
-                    }
-                }
-                popupContent += "</p>";
-                layer.bindPopup(popupContent);
-            }
-        }).addTo(mymap);
 
-        fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/BD_arbre.geojson')
+// Arbres 
+
+fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/BD_arbre.geojson')
             .then(response => response.json())
             .then(data => {
-                treeGeojsonLayer.addData(data);
+                function getColor(value, minValue, maxValue) {
+                    var colorScale = d3.scaleLinear()
+                        .domain([minValue, maxValue])
+                        .range(['pink', 'blue']); // Plage de couleurs de vert à rouge
+                    return colorScale(value);
+                }
+
+                var columnValues = data.features.map(feature => parseFloat(feature.properties['SOS']));
+                var minValue = Math.min(...columnValues);
+                var maxValue = Math.max(...columnValues);
+
+                L.geoJSON(data, {
+                    pointToLayer: function (feature, latlng) {
+                        var color = getColor(parseFloat(feature.properties['SOS']), minValue, maxValue);
+                        return L.circleMarker(latlng, {
+                            radius: 2,
+                            fillColor: color,
+                            color: color,
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.7
+                        });
+                    }
+                }).addTo(mymap);
+
+                var legend = L.control({ position: 'topright' });
+
+                legend.onAdd = function (map) {
+                    var div = L.DomUtil.create('div', 'info legend lineaire-simple'); // Utilisez la classe ici
+                    var grades = [minValue];
+                    var interval = (maxValue - minValue) / 6;
+                    for (var i = 1; i <= 5; i++) {
+                        grades.push(minValue + interval * i);
+                    }
+
+                    div.innerHTML += '<strong>Satellite : Sentinel-2</strong><br>';
+                    div.innerHTML += '<strong>Métrique phénologique : SOS</strong><br>';
+                    div.innerHTML += '<strong>(en Jours)</strong><br>';
+                    for (var j = 0; j < grades.length; j++) {
+                        var color = getColor(grades[j], minValue, maxValue);
+                        div.innerHTML +=
+                            '<div class="legend-icon" style="background:' + color + '"></div>' +
+                            (grades[j] !== minValue ? grades[j].toFixed(2) : '') + ' - ' +
+                            (grades[j + 1] !== undefined ? grades[j + 1].toFixed(2) + '<br>' : '+');
+                    }
+
+                    return div;
+                };
+
+                legend.addTo(mymap);
             });
+// Limites de communes 
 
         var communesGeojsonLayer = L.geoJSON(null, {
             style: function (feature) {
@@ -174,7 +222,8 @@
             });
 
 
-// Charger le GeoJSON des MAPUCES et l'ajouter à la carte
+// MAPUCES
+
 var MAPUCEGeojsonLayer = L.geoJSON(null, {
     style: function (feature) {
         var code = feature.properties.LCZ_MPCE;
@@ -225,9 +274,6 @@ fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/MAPUCE.geojso
 
 // Ajouter un bouton pour afficher/masquer la couche MAPUCES
 
-
-
-
 var legendLCZ = {
     1: { color: '#8f0f0f', name: 'Compact high-rise' },
     2: { color: '#e31a1c', name: 'Compact mid-rise' },
@@ -248,7 +294,6 @@ var legendLCZ = {
 
 
 var allLayers = {
-    "Arbres": treeGeojsonLayer,
     "Communes": communesGeojsonLayer,
     "MAPUCE": MAPUCEGeojsonLayer
 };
@@ -260,50 +305,6 @@ var couche = L.control.layers(null, allLayers, {
 couche.addTo(mymap);
 MAPUCEGeojsonLayer.remove();
 
-
-// Récupérer les données GeoJSON de la couche BD_arbre
-var treeData = treeGeojsonLayer.toGeoJSON();
-
-var SOS_S2 = treeData.features.map(feature => feature.properties.SOS);
-var Peak_S2 = treeData.features.map(feature => feature.properties.Peak);
-var EOS_S2 = treeData.features.map(feature => feature.properties.EOS);
-var SOS_PNT = treeData.features.map(feature => feature.properties.SOS_PNT);
-var Peak_PNT = treeData.features.map(feature => feature.properties.Peak_PNT);
-var EOS_PNT = treeData.features.map(feature => feature.properties.EOS_PNT);
-
-var mainButtons = document.getElementById("main-buttons");
-var variationButtons = document.getElementById("variation-buttons");
-
-var sosBtn = document.getElementById("sos-btn");
-var peakBtn = document.getElementById("peak-btn");
-var eosBtn = document.getElementById("eos-btn");
-var s2Btn = document.getElementById("s2-btn"); 
-var pntBtn = document.getElementById("pnt-btn"); 
-
-sosBtn.addEventListener("click", function () {
-    // Afficher les boutons de variation
-    variationButtons.style.display = "block";
-});
-
-peakBtn.addEventListener("click", function () {
-    // Afficher les boutons de variation
-    variationButtons.style.display = "block";
-});
-
-eosBtn.addEventListener("click", function () {
-    // Afficher les boutons de variation
-    variationButtons.style.display = "block";
-});
-
-s2Btn.addEventListener("click", function () {
-    // Mettre à jour le style ou l'affichage des arbres en fonction de variables S2
-    // Par exemple : treeGeojsonLayer.setStyle(...);
-});
-
-pntBtn.addEventListener("click", function () {
-    // Mettre à jour le style ou l'affichage des arbres en fonction de variables PNT
-    // Par exemple : treeGeojsonLayer.setStyle(...);
-});
 
 </script>
 
