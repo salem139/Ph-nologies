@@ -174,6 +174,7 @@
     <button id="Peak">Peak</button>
     <button id="EOS">EOS</button>
 
+    <input type="checkbox" id="mapuceToggle"> Afficher la couche MAPUCES
 
 
 
@@ -184,6 +185,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
 
     <script>
@@ -351,7 +354,7 @@ fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/BD_arbre.geoj
 
         // Créer une div pour le regroupement des encarts
         var combinedContainer = L.DomUtil.create('div', 'combined-container');
-        combinedContainer.style.padding = '10px';
+        combinedContainer.style.padding = '20px';
 
         // Ajouter les contrôles de couches à la div de regroupement
         var layerControlS2 = L.control.layers(null, geojsonLayersS2, {
@@ -477,7 +480,6 @@ fetch('https://raw.githubusercontent.com/salem139/Ph-nologies/main/MAPUCE.geojso
         MAPUCEGeojsonLayer.addData(data);
     });
 
-// Ajouter un bouton pour afficher/masquer la couche MAPUCES
 
 var legendLCZ = {
     1: { color: '#8f0f0f', name: 'Compact high-rise' },
@@ -497,6 +499,20 @@ var legendLCZ = {
     // ... Ajoutez les autres codes et leurs propriétés ici
 };
 
+    // Récupérez le bouton par son ID
+    var mapuceToggle = document.getElementById('mapuceToggle');
+
+    // Ajoutez un gestionnaire d'événements pour l'événement "change"
+    mapuceToggle.addEventListener('change', function () {
+        // Vérifiez si le bouton est coché ou décoché
+        if (this.checked) {
+            // Activer la couche MAPUCES
+            MAPUCEGeojsonLayer.addTo(mymap);
+        } else {
+            // Désactiver la couche MAPUCES
+            mymap.removeLayer(MAPUCEGeojsonLayer);
+        }
+    });
 
 var allLayers = {
     "Communes": communesGeojsonLayer,
