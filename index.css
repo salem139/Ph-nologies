@@ -1,0 +1,329 @@
+
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0; 
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.titre {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding: 10px;
+    background-color: rgba(122, 126, 123, 0.95);
+    font-family: Calibri, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: rgb(15, 14, 14);
+    z-index: 1;
+}
+
+/* Styles for baselayer controls */
+.leaflet-control-layers-toggle {
+    pointer-events: auto;
+    align-items: center;
+    top: 150px;
+    right: 20px;
+}
+
+/* Styles for layer controls */
+.leaflet-control-layers {
+    pointer-events: auto;
+    align-items: center;
+    top: 30px;
+    right: 0px;
+}
+
+
+/* Styles for zoom controls */
+.leaflet-control-zoom {
+    pointer-events: auto;
+    align-items: center;
+    top: 30px;
+    right: 2px;
+    /* Autres styles spécifiques aux contrôles de zoom */
+    /* ... */
+}
+
+.lineaire-simple {
+    background-color: white;
+    padding: 10px;
+    position: absolute;
+    top: 350px; /* Ajustez la position verticale */
+    right: 2px; /* Ajustez la position horizontale */
+    z-index: 1000;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 170px; /* Ajustez la largeur */
+}
+
+.legend-icon {
+    display: inline-block;
+    width: 10px;
+    height: 8px;
+    margin-right: 5px;
+    vertical-align: middle; /* Centrer verticalement les icônes */
+}
+
+.legend-text {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.legend-header {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px; /* Espacement en bas */
+}
+
+.tabs-container {
+    position: absolute;
+    top: 0px;
+    right: 0px; /* Aligner à gauche de la fenêtre */
+    z-index: 1;
+    display: flex;
+    flex-direction: row; /* Changer la direction en ligne */
+    gap: 0px; /* Espace entre les onglets */
+}
+
+.tab {
+    background-color: rgba(122, 126, 123, 0.95);
+    color: rgb(15, 14, 14);
+    padding: 10px;
+    font-family: Calibri, sans-serif;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    text-align: center;
+    width: 200px; /* Largeur des onglets */
+    height: 15px; /* Hauteur des onglets */
+}
+
+.tab:hover {
+    background-color: #00ff00; /* Vert en survol */
+}
+
+
+.tab.active {
+    background-color: #E45221; /* Couleur de fond pour l'onglet actif */
+    color: white; /* Couleur du texte pour l'onglet actif */
+}
+
+.panel {
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+}
+
+.panel-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.encart-title {
+    font-weight: bold;
+    text-align: center;
+}
+
+.combined-container {
+    display: flex;
+    justify-content: space-between;
+    margin-left: -10px; /* Ajoutez la marge souhaitée ici */
+}
+
+/* CSS pour personnaliser le cadre autour du slider */
+#slider-container {
+    position: absolute;
+    top: 120px; /* Ajustez la position verticale de l'encadré */
+    left: 10px;
+    z-index: 9999;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px; /* Ajustez la largeur de l'encadré */
+    height: 100px; /* Ajustez la hauteur de l'encadré */
+}
+
+#slider {
+    width: 100%;
+    margin: 10px auto 0; /* Ajustez la position verticale du slider à l'intérieur de l'encadré en utilisant margin-top */
+    height: 10px; /* Hauteur de la barre du slider */
+    border-radius: 10px; /* Coins arrondis */
+    background: linear-gradient(to right, gray, lightgreen, darkgreen, violet); /* Dégradé de couleurs */
+    outline: none; /* Supprime la bordure par défaut du slider */
+    appearance: none; /* Supprime les styles par défaut du slider */
+}
+
+#slider::-webkit-slider-thumb {
+    appearance: none; /* Supprime les styles par défaut du bouton du slider pour les navigateurs WebKit */
+    width: 20px; /* Largeur du bouton du slider */
+    height: 20px; /* Hauteur du bouton du slider */
+    background-color: #fff; /* Couleur du bouton du slider */
+    border: 2px solid #333; /* Bordure du bouton du slider */
+    border-radius: 50%; /* Coins arrondis pour le bouton du slider */
+    cursor: pointer; /* Curseur pointeur au survol */
+}
+
+#slider::-moz-range-thumb {
+    width: 20px; /* Largeur du bouton du slider pour les navigateurs Mozilla */
+    height: 20px; /* Hauteur du bouton du slider pour les navigateurs Mozilla */
+    background-color: #fff; /* Couleur du bouton du slider pour les navigateurs Mozilla */
+    border: 2px solid #333; /* Bordure du bouton du slider pour les navigateurs Mozilla */
+    border-radius: 50%; /* Coins arrondis pour le bouton du slider pour les navigateurs Mozilla */
+    cursor: pointer; /* Curseur pointeur au survol pour les navigateurs Mozilla */
+}
+
+/* CSS pour personnaliser le titre du slider */
+#slider-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 3px;
+    font-family: Calibri, sans-serif;
+    font-size: 16px;
+}
+
+/* CSS pour personnaliser le titre du slider */
+#slider-title_sec {
+    font-weight: bold;
+    color: #615f5f;
+    margin-bottom: 1px;
+    font-family: Calibri, sans-serif;
+    font-size: 12px;
+}
+
+/* Ajoutez un style pour le label du jour */
+#day-label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #555;
+    margin-top: 3px;
+    margin-bottom: 10px;
+    top : 30px;
+}
+
+/* Positionnez les étiquettes min et max sous le slider */
+.slider-label {
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #0e0d0d;
+    position: absolute;
+    top: 90px; /* Ajustez la marge supérieure pour les étiquettes */
+}
+
+/* Ajustez la position verticale et horizontale de l'étiquette "Jour 0" */
+.slider-label-min {
+    left: 3%; /* Ajustez la position horizontale par rapport à la marge gauche de la fenêtre */
+    top: 85%; /* Ajustez la position verticale par rapport à la hauteur de la fenêtre */
+}
+
+/* Ajustez la position verticale de l'étiquette "Jour 365" depuis le haut de la fenêtre */
+.slider-label-max {
+    right: 1%; /* Ajustez la position horizontale par rapport à la marge droite de la fenêtre */
+    top: 85%; /* Ajustez la position verticale par rapport à la hauteur de la fenêtre */
+}
+
+/* Ajoutez un style pour les étiquettes SOS, PIC et EOS */
+#slider-label-sos,
+#slider-label-pic,
+#slider-label-eos {
+    position: absolute;
+    text-align: center;
+    font-size: 8px;
+    font-weight: bold;
+    color: #555;
+    top: 70px; /* Ajustez la position verticale en pourcentage par rapport à la hauteur de la page */
+    width: 30px; /* Ajustez la largeur des étiquettes */
+    left: 0;
+}
+
+#slider-label-sos {
+    left: calc(15% + 0px); /* Ajustez la position horizontale pour l'étiquette SOS */
+}
+
+#slider-label-pic {
+    left: calc(45% + 0px); /* Ajustez la position horizontale pour l'étiquette PIC */
+}
+
+#slider-label-eos {
+    left: calc(80% + 10px); /* Ajustez la position horizontale pour l'étiquette PIC */
+}
+
+#toggle-container {
+    position: absolute;
+    top: 180px;
+    right: 10px;
+    background-color: white;
+    padding: 2px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#toggle-container label {
+    display: block;
+    margin: 5px 0;
+    font-family: Calibri, sans-serif; /* Police */
+    font-size: 12px; /* Taille de texte */
+}
+
+#legendContainer {
+    position: absolute;
+    top: 250px; /* Changement de la position verticale */
+    left: 10px;
+    z-index: 1000;
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 250px; /* Augmentation de la largeur */
+    display: none;
+    font-family: Calibri, Arial, sans-serif; /* Changement de la police */
+}
+
+#legendContainer h2 {
+    font-size: 14px; /* Augmentation de la taille de police */
+    margin-bottom: 10px; /* Augmentation de la marge inférieure */
+}
+
+#legend {
+    max-height: 200px; /* Augmentation de la hauteur */
+    overflow-y: auto;
+}
+
+.legend-hidden {
+    display: none;
+}
+
+/* Modifier le style des étiquettes de classe dans la légende */
+.legend-item {
+    font-size: 12px; /* Taille de police de 11 pixels */
+    /* Autres styles que vous souhaitez appliquer */
+}
+
+
+
+/* Modifier le style des rectangles de couleurs */
+.legend-color {
+    width: 20px; /* Largeur des rectangles de couleurs */
+    height: 12px; /* Hauteur des rectangles de couleurs */
+    display: inline-block;
+    margin-right: 5px; /* Marge entre les rectangles de couleurs et les étiquettes */
+}
