@@ -50,7 +50,7 @@ var tutorialSteps = [
     },
     {
         title: "Visualisation de données avancées",
-        content: "En déplacement le slider, il vous est possible de visualiser l'apparition des métriques phénologiques (en fonction des jours de l'année). En survolant une entité, il est possible des informations plus détaillées sur les arbres, leurs essences, hauteurs et bien plus. En cliquant sur une entité de Mapuce, il est possible d'obtenir une brève description de cette dernière."
+        content: "En déplacement le slider, il vous est possible de visualiser l'apparition des métriques phénologiques (en fonction des jours de l'année)."
     },  
     {
         title: "Fluidité de la page",
@@ -234,12 +234,7 @@ $(document).ready(function () {
     sliderLabel.textContent = "Jour de l'année : " + selectedDay;
 
     var geojsonUrls = [
-        'https://raw.githubusercontent.com/salem139/Ph-nologies/main/fichier_0.geojson',
-        'https://raw.githubusercontent.com/salem139/Ph-nologies/main/fichier_1.geojson',
-        'https://raw.githubusercontent.com/salem139/Ph-nologies/main/fichier_2.geojson',
-        'https://raw.githubusercontent.com/salem139/Ph-nologies/main/fichier_3.geojson',
-        'https://raw.githubusercontent.com/salem139/Ph-nologies/main/fichier_4.geojson',
-        'https://raw.githubusercontent.com/salem139/Ph-nologies/main/fichier_5.geojson',
+        'https://raw.githubusercontent.com/salem139/Ph-nologies/main/BD_arbre.geojson'
     ];
 
     function loadGeoJSON(url) {
@@ -262,38 +257,6 @@ $(document).ready(function () {
     var survolContainer = document.getElementById('survol-container');
     var survolContent = document.getElementById('survol-content');
 
-    function updateSurvolContent(properties) {
-        var contenuEncadre = `
-            <p>FID: ${properties.fid}</p>
-            <p>Code Port: ${properties.code_port === 'P1' ? 'Port libre' : 'Port architecturé'}</p>
-            <p>Hauteur: ${properties.hauteur} m</p>
-            <p>Diamètre du Tronc: ${properties.diam_tronc} m</p>
-            <p>Diamètre du Couronne: ${properties.diam_couro} m</p>
-            <p>PNT SOS: ${properties.PNT_SOS}ème jour</p>
-            <p>PNT Peak: ${properties.PNT_Peak}ème jour</p>
-            <p>PNT EOS: ${properties.PNT_EOS}ème jour</p>
-        `;
-        survolContent.innerHTML = contenuEncadré;
-        survolContainer.style.display = 'block';
-    }
-
-    geojsonUrls.forEach(function (geojsonUrl) {
-        $.getJSON(geojsonUrl, function (data) {
-            L.geoJSON(data, {
-                onEachFeature: function (feature, layer) {
-                    layer.on({
-                        mouseover: function (e) {
-                            var properties = e.target.feature.properties;
-                            updateSurvolContent(properties);
-                        },
-                        mouseout: function () {
-                            survolContainer.style.display = 'none';
-                        }
-                    });
-                }
-            }).addTo(mymap);
-        });
-    });
 });
 
 // --------------------------------------------- Communes ------------------------------------- //
@@ -339,13 +302,60 @@ var mapuceLayer = L.tileLayer.wms('http://31.32.249.29:85/cgi-bin/qgis_mapserv.f
     transparent: true,
 });
 
-// Gestionnaire d'événements pour la couche "MAPUCES"
-var mapuceToggle = document.getElementById('mapuceToggle');
+function toggleLegendVisibility(show) {
+    var legendContainer = document.getElementById('legendContainer');
+    if (show) {
+      legendContainer.style.display = 'block';
+    } else {
+      legendContainer.style.display = 'none';
+    }
+}
+
 mapuceToggle.addEventListener('change', function () {
     if (this.checked) {
         mapuceLayer.addTo(mymap);
+        // Affichez la légende lorsque la couche est activée
+        toggleLegendVisibility(true);
     } else {
         mymap.removeLayer(mapuceLayer);
+        // Masquez la légende lorsque la couche est désactivée
+        toggleLegendVisibility(false);
     }
 });
 
+
+var legendLCZ = {
+    1: { color: '#8f0f0f', name: 'Compact high-rise' },
+    2: { color: '#e31a1c', name: 'Compact mid-rise' },
+    3: { color: '#f25e60', name: 'Compact low-rise' },
+    4: { color: '#d15c0e', name: 'Open high-rise' },
+    5: { color: '#ff7f00', name: 'Open mid-rise' },
+    6: { color: '#f2b75e', name: 'Open low-rise' },
+    7: { color: '#ecdf26', name: 'Lightweight low-rise' },
+    8: { color: '#dccccc', name: 'Large low-rise' },
+    9: { color: '#d4d69d', name: 'Sparsely built' },
+    101: { color: '#126d27', name: 'Dense trees' },
+    102: { color: '#26a42a', name: 'Scattered trees' },
+    104: { color: '#dcff6b', name: 'Low plants' },
+    105: { color: '#000000', name: 'Bare rock or paved' },
+    107: { color: '#a6cee3', name: 'Water' },
+    // ... Ajoutez les autres codes et leurs propriétés ici
+};
+  
+// Ajoutez le contenu de la légende LCZ au div
+var legendContent = `
+    <h2 class="legend-title">Légende MAPUCE</h2>
+    <div id="legend"></div>
+`;
+
+for (var code in legendLCZ) {
+    var item = legendLCZ[code];
+    legendContent += `
+        <div class="legend-item">
+            <span class="legend-color" style="background-color: ${item.color}"></span>
+            ${item.name}
+        </div>
+    `;
+}
+
+document.getElementById('legendContainer').innerHTML = legendContent;
