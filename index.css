@@ -284,26 +284,46 @@ body, html {
     font-size: 12px; /* Taille de texte */
 }
 
-#survol-container {
+#legendContainer {
     position: absolute;
-    top: 250px;
+    top: 250px; /* Changement de la position verticale */
     left: 10px;
-    z-index: 9999;
-    background-color: rgba(255, 255, 255, 1);
-    border-radius: 10px;
+    z-index: 1000;
+    background-color: white;
     padding: 10px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 300px;
-    max-height: 300px; /* Vous pouvez ajuster la hauteur maximale si nécessaire */
-    overflow: hidden; /* Cache le contenu qui dépasse la hauteur maximale */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 250px; /* Augmentation de la largeur */
+    display: none;
+    font-family: Calibri, Arial, sans-serif; /* Changement de la police */
 }
 
-#survol-content {
-    /* Ajoutez vos paramètres de style personnalisés ici */
-    font-size: 14px;
-    line-height: 1.4;
-    color: #333;
+#legendContainer h2 {
+    font-size: 14px; /* Augmentation de la taille de police */
+    margin-bottom: 10px; /* Augmentation de la marge inférieure */
+}
+
+#legend {
+    max-height: 200px; /* Augmentation de la hauteur */
+    overflow-y: auto;
+}
+
+.legend-hidden {
+    display: none;
+}
+
+/* Modifier le style des étiquettes de classe dans la légende */
+.legend-item {
+    font-size: 12px; /* Taille de police de 11 pixels */
+    /* Autres styles que vous souhaitez appliquer */
+}
+
+
+
+/* Modifier le style des rectangles de couleurs */
+.legend-color {
+    width: 20px; /* Largeur des rectangles de couleurs */
+    height: 12px; /* Hauteur des rectangles de couleurs */
+    display: inline-block;
+    margin-right: 5px; /* Marge entre les rectangles de couleurs et les étiquettes */
 }
