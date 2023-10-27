@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
 
+
+<!-- Les balises head permettent de mettre les métadonnées et des informations sur la page web -->
 <head>
-    <meta charset="UTF-8">
-    <title>Phénologie des arbres strabourgeois (2022)</title>
+    <meta charset="UTF-8"> <!-- Correspond à l'encodage des caractères, important pour ne pas se retrouver avec des lettres bizarres -->
+    <title>Phénologie des arbres strabourgeois (2022)</title> <!-- Balise pour la définition du titre -->
+
+    <!-- Ces lignes sont utile pour inclure les feuilles de styles provenant de sources extérieures et utile pour les ressources intéractives de notre page -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -12,354 +16,35 @@
     <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
-    <style>
-        
-body, html {
-    height: 100%;
-    margin: 0;
-    padding: 0; 
-}
-
-#map {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-}
-
-.titre {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    padding: 10px;
-    background-color: rgba(122, 126, 123, 0.95);
-    font-family: Calibri, sans-serif;
-    font-size: 24px;
-    font-weight: bold;
-    color: rgb(15, 14, 14);
-    z-index: 1;
-}
-
-/* Styles for baselayer controls */
-.leaflet-control-layers-toggle {
-    pointer-events: auto;
-    align-items: center;
-    top: 150px;
-    right: 20px;
-}
-
-/* Styles for layer controls */
-.leaflet-control-layers {
-    pointer-events: auto;
-    align-items: center;
-    top: 30px;
-    right: 0px;
-}
-
-
-/* Styles for zoom controls */
-.leaflet-control-zoom {
-    pointer-events: auto;
-    align-items: center;
-    top: 30px;
-    right: 2px;
-    /* Autres styles spécifiques aux contrôles de zoom */
-    /* ... */
-}
-
-.lineaire-simple {
-    background-color: white;
-    padding: 10px;
-    position: absolute;
-    top: 350px; /* Ajustez la position verticale */
-    right: 2px; /* Ajustez la position horizontale */
-    z-index: 1000;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 170px; /* Ajustez la largeur */
-}
-
-.legend-icon {
-    display: inline-block;
-    width: 10px;
-    height: 8px;
-    margin-right: 5px;
-    vertical-align: middle; /* Centrer verticalement les icônes */
-}
-
-.legend-text {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.legend-header {
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 5px; /* Espacement en bas */
-}
-
-.tabs-container {
-    position: absolute;
-    top: 0px;
-    right: 0px; /* Aligner à gauche de la fenêtre */
-    z-index: 1;
-    display: flex;
-    flex-direction: row; /* Changer la direction en ligne */
-    gap: 0px; /* Espace entre les onglets */
-}
-
-.tab {
-    background-color: rgba(122, 126, 123, 0.95);
-    color: rgb(15, 14, 14);
-    padding: 10px;
-    font-family: Calibri, sans-serif;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px 5px 0 0;
-    cursor: pointer;
-    text-align: center;
-    width: 200px; /* Largeur des onglets */
-    height: 15px; /* Hauteur des onglets */
-}
-
-.tab:hover {
-    background-color: #00ff00; /* Vert en survol */
-}
-
-
-.tab.active {
-    background-color: #E45221; /* Couleur de fond pour l'onglet actif */
-    color: white; /* Couleur du texte pour l'onglet actif */
-}
-
-.panel {
-    background-color: white;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 200px;
-}
-
-.panel-title {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 5px;
-}
-
-.encart-title {
-    font-weight: bold;
-    text-align: center;
-}
-
-.combined-container {
-    display: flex;
-    justify-content: space-between;
-    margin-left: -10px; /* Ajoutez la marge souhaitée ici */
-}
-
-/* CSS pour personnaliser le cadre autour du slider */
-#slider-container {
-    position: absolute;
-    top: 120px; /* Ajustez la position verticale de l'encadré */
-    left: 10px;
-    z-index: 9999;
-    background-color: rgba(255, 255, 255, 1);
-    border-radius: 10px;
-    padding: 10px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 300px; /* Ajustez la largeur de l'encadré */
-    height: 100px; /* Ajustez la hauteur de l'encadré */
-}
-
-#slider {
-    width: 100%;
-    margin: 10px auto 0; /* Ajustez la position verticale du slider à l'intérieur de l'encadré en utilisant margin-top */
-    height: 10px; /* Hauteur de la barre du slider */
-    border-radius: 10px; /* Coins arrondis */
-    background: linear-gradient(to right, gray, lightgreen, darkgreen, violet); /* Dégradé de couleurs */
-    outline: none; /* Supprime la bordure par défaut du slider */
-    appearance: none; /* Supprime les styles par défaut du slider */
-}
-
-#slider::-webkit-slider-thumb {
-    appearance: none; /* Supprime les styles par défaut du bouton du slider pour les navigateurs WebKit */
-    width: 20px; /* Largeur du bouton du slider */
-    height: 20px; /* Hauteur du bouton du slider */
-    background-color: #fff; /* Couleur du bouton du slider */
-    border: 2px solid #333; /* Bordure du bouton du slider */
-    border-radius: 50%; /* Coins arrondis pour le bouton du slider */
-    cursor: pointer; /* Curseur pointeur au survol */
-}
-
-#slider::-moz-range-thumb {
-    width: 20px; /* Largeur du bouton du slider pour les navigateurs Mozilla */
-    height: 20px; /* Hauteur du bouton du slider pour les navigateurs Mozilla */
-    background-color: #fff; /* Couleur du bouton du slider pour les navigateurs Mozilla */
-    border: 2px solid #333; /* Bordure du bouton du slider pour les navigateurs Mozilla */
-    border-radius: 50%; /* Coins arrondis pour le bouton du slider pour les navigateurs Mozilla */
-    cursor: pointer; /* Curseur pointeur au survol pour les navigateurs Mozilla */
-}
-
-/* CSS pour personnaliser le titre du slider */
-#slider-title {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 3px;
-    font-family: Calibri, sans-serif;
-    font-size: 16px;
-}
-
-/* CSS pour personnaliser le titre du slider */
-#slider-title_sec {
-    font-weight: bold;
-    color: #615f5f;
-    margin-bottom: 1px;
-    font-family: Calibri, sans-serif;
-    font-size: 12px;
-}
-
-/* Ajoutez un style pour le label du jour */
-#day-label {
-    font-weight: bold;
-    font-size: 14px;
-    color: #555;
-    margin-top: 3px;
-    margin-bottom: 10px;
-    top : 30px;
-}
-
-/* Positionnez les étiquettes min et max sous le slider */
-.slider-label {
-    text-align: center;
-    font-size: 12px;
-    font-weight: bold;
-    color: #0e0d0d;
-    position: absolute;
-    top: 90px; /* Ajustez la marge supérieure pour les étiquettes */
-}
-
-/* Ajustez la position verticale et horizontale de l'étiquette "Jour 0" */
-.slider-label-min {
-    left: 3%; /* Ajustez la position horizontale par rapport à la marge gauche de la fenêtre */
-    top: 85%; /* Ajustez la position verticale par rapport à la hauteur de la fenêtre */
-}
-
-/* Ajustez la position verticale de l'étiquette "Jour 365" depuis le haut de la fenêtre */
-.slider-label-max {
-    right: 1%; /* Ajustez la position horizontale par rapport à la marge droite de la fenêtre */
-    top: 85%; /* Ajustez la position verticale par rapport à la hauteur de la fenêtre */
-}
-
-/* Ajoutez un style pour les étiquettes SOS, PIC et EOS */
-#slider-label-sos,
-#slider-label-pic,
-#slider-label-eos {
-    position: absolute;
-    text-align: center;
-    font-size: 8px;
-    font-weight: bold;
-    color: #555;
-    top: 70px; /* Ajustez la position verticale en pourcentage par rapport à la hauteur de la page */
-    width: 30px; /* Ajustez la largeur des étiquettes */
-    left: 0;
-}
-
-#slider-label-sos {
-    left: calc(15% + 0px); /* Ajustez la position horizontale pour l'étiquette SOS */
-}
-
-#slider-label-pic {
-    left: calc(45% + 0px); /* Ajustez la position horizontale pour l'étiquette PIC */
-}
-
-#slider-label-eos {
-    left: calc(80% + 10px); /* Ajustez la position horizontale pour l'étiquette PIC */
-}
-
-#toggle-container {
-    position: absolute;
-    top: 180px;
-    right: 10px;
-    background-color: white;
-    padding: 2px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-#toggle-container label {
-    display: block;
-    margin: 5px 0;
-    font-family: Calibri, sans-serif; /* Police */
-    font-size: 12px; /* Taille de texte */
-}
-
-#legendContainer {
-    position: absolute;
-    top: 250px; /* Changement de la position verticale */
-    left: 10px;
-    z-index: 1000;
-    background-color: white;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    max-width: 250px; /* Augmentation de la largeur */
-    display: none;
-    font-family: Calibri, Arial, sans-serif; /* Changement de la police */
-}
-
-#legendContainer h2 {
-    font-size: 14px; /* Augmentation de la taille de police */
-    margin-bottom: 10px; /* Augmentation de la marge inférieure */
-}
-
-#legend {
-    max-height: 200px; /* Augmentation de la hauteur */
-    overflow-y: auto;
-}
-
-.legend-hidden {
-    display: none;
-}
-
-/* Modifier le style des étiquettes de classe dans la légende */
-.legend-item {
-    font-size: 12px; /* Taille de police de 11 pixels */
-    /* Autres styles que vous souhaitez appliquer */
-}
-
-
-
-/* Modifier le style des rectangles de couleurs */
-.legend-color {
-    width: 20px; /* Largeur des rectangles de couleurs */
-    height: 12px; /* Hauteur des rectangles de couleurs */
-    display: inline-block;
-    margin-right: 5px; /* Marge entre les rectangles de couleurs et les étiquettes */
-}
-
-    </style>
+    <!-- Balise pour faire appel à notre fichier de style créer en parallèle -->
+    <link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/salem139/Ph-nologies/main/style.css">
 </head>
 
+<!-- Les balises body permettent l'affficher le contenu qui est visible sur la page, comme les images ou boutons -->
 <body>
+    <!-- Balise division pour créer une section de la page, avec une classe signifiant qu'il s'agit de notre titre -->
     <div class="titre">
-        <strong>La phénologie des arbres urbains à Strasbourg en 2022</strong>
-    </div>
-
-    <div class="tabs-container">
-        <div class="tab" id="tabTutoriel">Tutoriel</div>
-        <div class="tab" id="tabAPropos">À Propos</div>
+        <strong>
+            <span class="icone-avant"></span> La phénologie des arbres urbains en 2022
+            <span class="icone-apres"></span><br>L'eurométropole de Strasbourg
+        </strong>
     </div>
     
+
+    <!-- Balise pour les onglets en haut a droite de la page -->
+    <div class="tabs-container">
+        <div class="tab" id="tabAPropos">À Propos</div>
+        <div class="tab" id="tabTutoriel">Tutoriel</div>
+        <div class="tab" id="tabref">Références</div>
+    </div>
+
+    
+    <!-- Balise correspond à l'affichage de la carte -->
     <div id="mapContainer">
         <div id="map"></div>
     </div>
 
+    <!-- Balise correspond à l'affichage de la légende -->
     <div id="legendContainer">
         <h2>Légende</h2>
         <div id="legend">
@@ -367,7 +52,7 @@ body, html {
         </div>
     </div>
 
-    
+    <!-- Balise correspond à du slider, et des étiquettes visibles associé au slider -->
     <div id="slider-container">
         <div id="slider-title">Phénologie des arbres en 2022</div>
         <div id="slider-title_sec">Capteur : Satellites Planet-scop</div>
@@ -380,376 +65,20 @@ body, html {
         <div class="slider-label slider-label-max">365</div>
     </div>
     
+    <!-- Ces balises correspondent à l'affichage des boutons pour activer ou désactiver les couches communes et mapuces -->
     <div id="toggle-container">
-        <label><input type="checkbox" id="communesToggle">Communes</label>
-        <label><input type="checkbox" id="mapuceToggle">MAPUCES</label>
+        <label>
+            <input type="checkbox" id="communesToggle">
+            Communes
+        </label>
+        <label>
+            <input type="checkbox" id="mapuceToggle">
+            MAPUCES
+        </label>
     </div>
-    
-    
-    <script>
-        
-var mymap = L.map('map', {
-    center: [48.58, 7.74],
-    zoom: 14,
-    minZoom: 10,
-    maxZoom: 18,
-    zoomControl: false
-});
 
-var baselayers = {
-    LIGHT: L.tileLayer('https://tile.jawg.io/jawg-light/{z}/{x}/{y}{r}.png?access-token=OFCl0kpcDyvePBetMgGBXyAYT2B8U7iQmzPMLToEsUT9W1i6Q7WdkHJ3CGUE0o9e', { attribution: 'Master OTG Strasbourg / Guillot ', minZoom: 10 }),
-    DARK: L.tileLayer('https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=OFCl0kpcDyvePBetMgGBXyAYT2B8U7iQmzPMLToEsUT9W1i6Q7WdkHJ3CGUE0o9e', { attribution: 'Master OTG Strasbourg / Guillot', minZoom: 10 }),
-    TOPOGRAPHY: L.tileLayer('https://tile.jawg.io/jawg-terrain/{z}/{x}/{y}{r}.png?access-token=OFCl0kpcDyvePBetMgGBXyAYT2B8U7iQmzPMLToEsUT9W1i6Q7WdkHJ3CGUE0o9e', { attribution: 'Master OTG Strasbourg / Guillot', minZoom: 10 }),
-    SATELLITE: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Master OTG Strasbourg / Guillot', minZoom: 10 })
-};
-
-baselayers.LIGHT.addTo(mymap);
-
-L.control.layers(baselayers, null, { position: 'topright' }, { collapsed: false }).addTo(mymap);
-
-L.control.zoom({
-    position: 'topright'
-}).addTo(mymap);
-
-L.control.scale({
-    position: 'bottomright'
-}).addTo(mymap);
-
-var tabCarte = document.getElementById('tabCarte');
-var tabTutoriel = document.getElementById('tabTutoriel');
-var tabAPropos = document.getElementById("tabAPropos");
-
-tabAPropos.addEventListener("click", function () {
-    window.location.href = "https://salem139.github.io/Phenology-2/";
-});
-
-
-var tutorialSteps = [
-    {
-        title: "Tutoriel de l'interface",
-        content: "Cette interface donne à l'utilisateur à la fois la possibilité de visualiser une partie de la population arborée de l'Eurométropole de Strasbourg. La coloration des arbres apporte des informations sur la phénologie à travers l'étude de plusieurs métriques phénologiques pour l'année 2022. "
-    },
-    {
-        title: "Prise en main",
-        content: "Il est possible de se déplacer sur la carte, de modifier le zoom, ou encore de changer le fond de la carte."
-    },
-    {
-        title: "Visualisation des données",
-        content: "En cliquant à travers les boutons présents, il est possible d'obtenir des informations variées en fonction du cas souhaité ; les limites des communes de l'Eurométropole ou encore les local climates zones (classification de la morphologie urbaine)."
-    },
-    {
-        title: "Visualisation de données avancées",
-        content: "En déplacement le slider, il vous est possible de visualiser l'apparition des métriques phénologiques (en fonction des jours de l'année)."
-    },  
-    {
-        title: "Fluidité de la page",
-        content: "Les données étant assez importantes, il est conseillé pour la réactivé du slider de zoomer sur une zone en particulier, mais cela n'est pas obligatoire."
-    }
-];
-
-tabTutoriel.addEventListener('click', function () {
-    var stepIndex = 0;
-
-    function showNextStep() {
-        Swal.fire({
-            title: tutorialSteps[stepIndex].title,
-            html: tutorialSteps[stepIndex].content,
-            confirmButtonText: 'Étape suivante &rarr;',
-            showCancelButton: true,
-            progressSteps: [String(stepIndex + 1)],
-            reverseButtons: true,
-            cancelButtonText: "Quitter",
-            onBeforeOpen: () => {
-                $('.swal2-confirm').removeClass('swal2-confirm');
-            }
-        }).then((result) => {
-            if (result.value) {
-                stepIndex++;
-                if (stepIndex < tutorialSteps.length) {
-                    showNextStep();
-                } else {
-                    Swal.fire({
-                        title: 'Informations complémentaires',
-                        html: "Pour plus de renseignements, veuillez vous référer à la section '<u>À propos</u>'.",
-                        confirmButtonText: "C'est parti !"
-                    });
-                }
-            }
-        });
-    }
-
-    showNextStep();
-});
-
-
-
-// ---------------------------------------- arbres ---------------------------------------// 
-$(document).ready(function () {
-    var treeMarkers = {};
-    var dataArray;
-    var selectedDay;
-
-    var slider = $("#slider");
-
-    function createCircleMarker(latlng, color = 'gray', radius = 2) {
-        let circleRadius = 2;
-
-        const currentZoom = mymap.getZoom();
-
-        if (currentZoom >= 10 && currentZoom < 12) {
-            circleRadius = 1;
-        } else if (currentZoom >= 12 && currentZoom < 17) {
-            circleRadius = 2;
-        } else if (currentZoom === 17) {
-            circleRadius = 3;
-        } else if (currentZoom === 18) {
-            circleRadius = 4;
-        }
-
-        return L.circleMarker(latlng, {
-            radius: circleRadius,
-            fillColor: color,
-            color: color,
-            weight: 0,
-            opacity: 1,
-            fillOpacity: 0.85
-        });
-    }
-
-    mymap.on('zoomend', function () {
-        treeMarkerGroup.eachLayer(function (layer) {
-            layer.setRadius(createCircleMarker(layer.getLatLng()).getRadius());
-        });
-    });
-
-    function createTreeMarkers(data) {
-        data.features.forEach(feature => {
-            const treeId = feature.properties['fid'];
-            const latlng = L.latLng(feature.geometry.coordinates[1], feature.geometry.coordinates[0]);
-            const circleMarker = createCircleMarker(latlng);
-            circleMarker.addTo(mymap);
-            treeMarkers[treeId] = circleMarker;
-        });
-        console.log('Tree markers created.');
-    }
-
-    var treeMarkerGroup = L.layerGroup().addTo(mymap);
-
-    function updateVisibleTreeColors() {
-        treeMarkerGroup.clearLayers();
-        const bounds = mymap.getBounds();
-
-        dataArray.forEach(data => {
-            data.features.forEach(feature => {
-                const treeId = feature.properties['fid'];
-                const circleMarker = treeMarkers[treeId];
-                let color = 'gray';
-
-                const latlng = L.latLng(feature.geometry.coordinates[1], feature.geometry.coordinates[0]);
-                if (bounds.contains(latlng)) {
-                    const sos = parseInt(feature.properties['PNT_SOS']);
-                    const peak = parseInt(feature.properties['PNT_Peak']);
-                    const eos = parseInt(feature.properties['PNT_EOS']);
-
-                    if (!isNaN(sos) && !isNaN(peak) && !isNaN(eos)) {
-                        if (selectedDay >= sos && selectedDay < peak) {
-                            color = 'lightgreen';
-                        } else if (selectedDay >= peak && selectedDay < eos) {
-                            color = 'darkgreen';
-                        } else if (selectedDay >= eos) {
-                            color = 'purple';
-                        }
-                    }
-
-                    if (circleMarker) {
-                        circleMarker.setStyle({ fillColor: color });
-                        circleMarker.addTo(treeMarkerGroup);
-                    }
-                }
-            });
-        });
-
-        console.log('Tree colors updated for the visible area.');
-    }
-
-    mymap.on('moveend', updateVisibleTreeColors);
-
-    function updateTreeColors(selectedDay) {
-        treeMarkerGroup.clearLayers();
-
-        dataArray.forEach(data => {
-            data.features.forEach(feature => {
-                const treeId = feature.properties['fid'];
-                const circleMarker = treeMarkers[treeId];
-                let color = 'gray';
-
-                const sos = parseInt(feature.properties['PNT_SOS']);
-                const peak = parseInt(feature.properties['PNT_Peak']);
-                const eos = parseInt(feature.properties['PNT_EOS']);
-
-                if (!isNaN(sos) && !isNaN(peak) && !isNaN(eos)) {
-                    if (selectedDay >= sos && selectedDay < peak) {
-                        color = 'lightgreen';
-                    } else if (selectedDay >= peak && selectedDay < eos) {
-                        color = 'darkgreen';
-                    } else if (selectedDay >= eos) {
-                        color = 'purple';
-                    }
-                }
-
-                if (circleMarker) {
-                    circleMarker.setStyle({ fillColor: color });
-                    circleMarker.addTo(treeMarkerGroup);
-                }
-            });
-        });
-
-        console.log('Tree colors updated.');
-    }
-
-    var sliderTitle = $('#slider-title');
-    var sliderLabel = document.getElementById('day-label');
-    selectedDay = slider.val();
-
-    slider.on('input', function () {
-        selectedDay = $(this).val();
-        sliderTitle.text('Phénologie des arbres en 2022');
-        sliderLabel.textContent = "Jour de l'année : " + selectedDay;
-        updateTreeColors(selectedDay);
-        console.log('Slider value changed to: ' + selectedDay);
-    });
-
-    sliderTitle.text('Phénologie des arbres en 2022');
-    sliderLabel.textContent = "Jour de l'année : " + selectedDay;
-
-    var geojsonUrls = [
-        'https://raw.githubusercontent.com/salem139/Ph-nologies/main/BD_arbre.geojson'
-    ];
-
-    function loadGeoJSON(url) {
-        return fetch(url)
-            .then(response => response.json());
-    }
-
-    Promise.all(geojsonUrls.map(url => loadGeoJSON(url)))
-        .then(dataArrayResponse => {
-            dataArray = dataArrayResponse;
-            dataArray.forEach(data => {
-                createTreeMarkers(data);
-            });
-            updateTreeColors(selectedDay);
-        })
-        .catch(error => {
-            console.error('Erreur lors du chargement des données GeoJSON :', error);
-        });
-
-    var survolContainer = document.getElementById('survol-container');
-    var survolContent = document.getElementById('survol-content');
-
-});
-
-// --------------------------------------------- Communes ------------------------------------- //
-
-var communesLayer = L.tileLayer.wms('http://31.32.249.29:85/cgi-bin/qgis_mapserv.fcgi?', {
-    layers: 'limites_ems',
-    MAP:'/M2OTG/Romain/Carte_phenology.qgs',
-    format: 'image/png',
-    transparent: true,
-}).addTo(mymap);
-
-
-// Gestionnaire d'événements pour la couche "Communes"
-var communesToggle = document.getElementById('communesToggle');
-
-// Fonction pour activer ou désactiver la couche des communes
-function toggleCommunesLayer(activate) {
-    if (activate) {
-        communesLayer.addTo(mymap);
-        communesToggle.checked = true; // Cochez le bouton
-    } else {
-        mymap.removeLayer(communesLayer);
-        communesToggle.checked = false; // Décochez le bouton
-    }
-}
-
-// Ajoutez la couche des communes à la carte et activez le bouton dès l'ouverture de la page
-toggleCommunesLayer(true);
-
-// Ajoutez un gestionnaire d'événements pour le bouton de bascule
-communesToggle.addEventListener('change', function () {
-    toggleCommunesLayer(this.checked);
-});
-
-
-// -------------------------------------- Mapuce ---------------------------------------------//
-
-// Code pour la couche "MAPUCES"
-var mapuceLayer = L.tileLayer.wms('http://31.32.249.29:85/cgi-bin/qgis_mapserv.fcgi?', {
-    MAP: '/M2OTG/Romain/Carte_phenology.qgs',
-    layers: 'LCZ_mapuce',
-    format: 'image/png',
-    transparent: true,
-});
-
-function toggleLegendVisibility(show) {
-    var legendContainer = document.getElementById('legendContainer');
-    if (show) {
-      legendContainer.style.display = 'block';
-    } else {
-      legendContainer.style.display = 'none';
-    }
-}
-
-mapuceToggle.addEventListener('change', function () {
-    if (this.checked) {
-        mapuceLayer.addTo(mymap);
-        // Affichez la légende lorsque la couche est activée
-        toggleLegendVisibility(true);
-    } else {
-        mymap.removeLayer(mapuceLayer);
-        // Masquez la légende lorsque la couche est désactivée
-        toggleLegendVisibility(false);
-    }
-});
-
-
-var legendLCZ = {
-    1: { color: '#8f0f0f', name: 'Compact high-rise' },
-    2: { color: '#e31a1c', name: 'Compact mid-rise' },
-    3: { color: '#f25e60', name: 'Compact low-rise' },
-    4: { color: '#d15c0e', name: 'Open high-rise' },
-    5: { color: '#ff7f00', name: 'Open mid-rise' },
-    6: { color: '#f2b75e', name: 'Open low-rise' },
-    7: { color: '#ecdf26', name: 'Lightweight low-rise' },
-    8: { color: '#dccccc', name: 'Large low-rise' },
-    9: { color: '#d4d69d', name: 'Sparsely built' },
-    101: { color: '#126d27', name: 'Dense trees' },
-    102: { color: '#26a42a', name: 'Scattered trees' },
-    104: { color: '#dcff6b', name: 'Low plants' },
-    105: { color: '#000000', name: 'Bare rock or paved' },
-    107: { color: '#a6cee3', name: 'Water' },
-    // ... Ajoutez les autres codes et leurs propriétés ici
-};
-  
-// Ajoutez le contenu de la légende LCZ au div
-var legendContent = `
-    <h2 class="legend-title">Légende MAPUCE</h2>
-    <div id="legend"></div>
-`;
-
-for (var code in legendLCZ) {
-    var item = legendLCZ[code];
-    legendContent += `
-        <div class="legend-item">
-            <span class="legend-color" style="background-color: ${item.color}"></span>
-            ${item.name}
-        </div>
-    `;
-}
-
-document.getElementById('legendContainer').innerHTML = legendContent;
-
-    </script>
+    <!-- Ces balises correspondent à l'appel du script javascript créer dans un fichier annexe -->
+    <script src="https://raw.githubusercontent.com/salem139/Ph-nologies/main/main.js"></script>
 </body>
 
 </html>
