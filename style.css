@@ -1,0 +1,383 @@
+/* Définition des paramètres pour le corps et la page HTML */
+body, html {
+    height: 100%; /*la hauteur*/
+    margin: 0; /*la marge*/
+    padding: 0; /*l'espacement*/
+}
+
+/* Styles de base pour la carte */
+#map {
+    position: absolute; /*Positionnement par rapport à son contenu*/
+    top: 0; /*Gestion du bord supérieur*/
+    left: 0; /*Gestion du bord gauche*/
+    width: 100%; /*la largeur*/
+    height: 100%; /*la hauteur*/
+    z-index: 0; /*son niveau d'affichage par rapport aux autres élements */
+}
+
+/* Styles pour le titre */
+.titre {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding: 10px;
+    text-align: center; /* Centre le texte horizontalement */
+    background-color: rgba(122, 126, 123, 0.95); /*La couleur de fond*/
+    font-family: Calibri, sans-serif; /* La police d'écriture, t'es la meilleure calibri */
+    font-size: 24px; /*La taille de la police*/
+    font-weight: bold;/*En gras*/
+    color: rgb(15, 14, 14); /*Et la couleur*/
+    z-index: 1;
+}
+
+.icone-avant::before,
+.icone-apres::before {
+    content: ""; /* On laisse vide pour que les icônes puissent s'afficher*/
+    display: inline-block; /* On affiche les icônes en ligne avec le texte */
+    width: 40px; 
+    height: 40px; 
+    background-size: contain; /* On ajuste la taille de l'icône pour qu'elle s'adapte au conteneur */
+    background-repeat: no-repeat; /* On empêche la répétition de l'icône */
+    vertical-align: middle; /* On aligne verticalement les icônes au milieu du texte */
+}
+
+.icone-avant::before {
+    background-image: url('https://raw.githubusercontent.com/salem139/Ph-nologies/main/arbre.png'); /* Chemin vers l'icône */
+    margin-right: 2px; /* Espace entre l'icône avant et le texte */
+}
+
+.icone-apres::before {
+    background-image: url('https://raw.githubusercontent.com/salem139/Ph-nologies/main/arbre.png');
+    margin-left: 2px; 
+}
+
+
+/* Styles pour les contrôles de la couche de base */
+.leaflet-control-layers-toggle {
+    pointer-events: auto; /*Gestion des événements par la souris */
+    align-items: center; /*Centrage des élements dans leurs contenants */
+    top: 150px; /* L'élement est placé à 150 pixels du bord supérieur de son contenant */
+    right: 20px; /*Idem pour le bord droit */
+}
+
+/* Styles pour les contrôles de la couche */
+.leaflet-control-layers {
+    pointer-events: auto; 
+    align-items: center; 
+    top: 30px;
+    right: 0px;
+}
+
+/* Styles pour les contrôles de zoom */
+.leaflet-control-zoom {
+    pointer-events: auto;
+    align-items: center;
+    top: 30px;
+    right: 2px;
+}
+
+/* Styles pour l'encart linéaire simple */
+.lineaire-simple {
+    background-color: white;
+    padding: 10px;
+    position: absolute;
+    top: 350px; 
+    right: 2px; 
+    z-index: 1000;
+    border: 1px solid #ccc; /* Ajoute une bordure de 1 pixel */
+    border-radius: 5px; /* Définition du rayon de bordure (arrondissement coins) */
+    width: 170px;
+}
+
+/* Styles pour l'icône de la légende */
+.legend-icon {
+    display: inline-block; /* Les élements se placent en ligne avec une boite qui se met autour */
+    width: 10px;
+    height: 8px;
+    margin-right: 5px;
+    vertical-align: middle; /* Centrer verticalement les icônes */
+}
+
+/* Styles pour le texte de la légende */
+.legend-text {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Styles pour l'en-tête de la légende */
+.legend-header {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px; /* Espacement en bas */
+}
+
+/* Styles pour le conteneur des onglets */
+.tabs-container {
+    position: absolute;
+    top: 0px;
+    right: 0px; 
+    z-index: 1;
+    display: flex; /* Disposition flexible en fonction des élements contenu dans les onglets */
+    flex-direction: row; /* Changer la direction en ligne des élements */
+    gap: 0px; /* Espace entre les éléments de l'onglet */
+}
+
+/* Styles pour chaque onglet */
+.tab {
+    background-color: rgba(122, 126, 123, 0.95);
+    color: rgb(15, 14, 14);
+    padding: 10px;
+    font-family: Calibri, sans-serif;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    text-align: center;
+    width: 200px;
+    height: 15px; 
+}
+
+/* Styles pour l'onglet en survol */
+.tab:hover {
+    background-color: #579757; /* Vert en survol */
+}
+
+/* Styles pour l'onglet actif */
+.tab.active {
+    background-color: #af5d42; /* Couleur de fond pour l'onglet actif */
+    color: white; /* Couleur du texte pour l'onglet actif */
+}
+
+/* Styles pour le panneau */
+.panel {
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+}
+
+/* Styles pour le titre du panneau */
+.panel-title {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+/* Styles pour le titre de l'encart */
+.encart-title {
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Styles pour le conteneur combiné */
+.combined-container {
+    display: flex;
+    justify-content: space-between; /* Espacement égal entre les élements du conteneur, ils sont ainsi alignés en fonction des bords droit et gauche */
+    margin-left: -10px; /* Décale les élements vers la gauche */
+}
+
+/* Styles pour le conteneur du slider */
+#slider-container {
+    position: absolute;
+    top: 120px;
+    left: 10px;
+    z-index: 0;
+    background-color: rgba(255, 255, 255, 1);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column; /* Disposition en colonne, les élements les uns en dessous des autres */
+    align-items: center;
+    width: 300px; 
+    height: 100px;
+}
+
+/* Styles pour le slider */
+#slider {
+    width: 100%;
+    margin: 10px auto 0;
+    height: 10px; 
+    z-index: 0;
+    border-radius: 10px; 
+    background: linear-gradient(to right, gray, lightgreen, darkgreen, violet); /* Dégradé de couleurs */
+    outline: none; /* Supprime la bordure par défaut du slider */
+    appearance: none; /* Supprime les styles par défaut du slider */
+}
+
+/* Styles pour le bouton du slider (pour tous les navigateurs) */
+#slider::-webkit-slider-thumb,
+#slider::-moz-range-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border: 2px solid #333;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Styles pour le titre du slider */
+#slider-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    font-family: Calibri, sans-serif;
+    font-size: 16px;
+}
+
+#slider-title_sec {
+    font-weight: bold;
+    color: #615f5f;
+    margin-bottom: 1px;
+    font-family: Calibri, sans-serif;
+    font-size: 12px;
+}
+
+/* Ajoutez un style pour le label du jour */
+#day-label {
+    font-weight: bold;
+    font-size: 14px;
+    color: #555;
+    margin-top: 3px;
+    margin-bottom: 10px;
+    top: 30px;
+}
+
+/* Positionnez les étiquettes min et max sous le slider */
+.slider-label {
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    color: #0e0d0d;
+    position: absolute;
+    top: 90px; /* Ajustez la marge supérieure pour les étiquettes */
+}
+
+/* Ajustez la position verticale et horizontale de l'étiquette "Jour 0" */
+.slider-label-min {
+    left: 3%; /* Ajustement ici en % car plus facile lors du paramétrage*/
+    top: 85%; 
+}
+
+/* Ajustez la position verticale de l'étiquette "Jour 365" depuis le haut de la fenêtre */
+.slider-label-max {
+    right: 1%; 
+    top: 85%;
+}
+
+/* Ajoutez un style pour les étiquettes SOS, PIC et EOS */
+#slider-label-sos,
+#slider-label-pic,
+#slider-label-eos {
+    position: absolute;
+    text-align: center;
+    font-size: 8px;
+    font-weight: bold;
+    color: #555;
+    top: 70px; 
+    width: 30px; 
+    left: 0;
+}
+
+/* Ajustez la position horizontale pour l'étiquette SOS */
+#slider-label-sos {
+    left: calc(15% + 0px); 
+}
+
+/* Ajustez la position horizontale pour l'étiquette PIC */
+#slider-label-pic {
+    left: calc(45% + 0px); 
+}
+
+/* Ajustez la position horizontale pour l'étiquette PIC */
+#slider-label-eos {
+    left: calc(80% + 10px); 
+}
+
+/* Styles pour le conteneur de bascule */
+#toggle-container {
+    position: absolute;
+    top: 180px;
+    right: 10px;
+    background-color: white;
+    padding: 2px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Styles pour les balisees label pour l'élement avec l'ID "toggle-container" */
+#toggle-container label {
+    display: block;
+    margin: 5px 0;
+    font-family: Calibri, sans-serif; 
+    font-size: 12px; 
+}
+
+/* Styles pour le conteneur de bascule */
+#arbres-container {
+    position: absolute;
+    top: 300px;
+    right: 10px;
+    background-color: white;
+    padding: 2px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Styles pour les balisees label pour l'élement avec l'ID "toggle-container" */
+#arbres-container label {
+    display: block;
+    margin: 5px 0;
+    font-family: Calibri, sans-serif; 
+    font-size: 12px; 
+}
+
+
+/* Styles pour le conteneur de légende */
+#legendContainer {
+    position: absolute;
+    top: 250px;
+    left: 10px;
+    z-index: 1000;
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 250px;
+    display: none;
+    font-family: Calibri, Arial, sans-serif;
+}
+
+/* Style pour les balises H2 à l'intérieur de l'élément toggle-container */
+#legendContainer h2 {
+    font-size: 14px;
+    margin-bottom: 10px; 
+}
+
+/* Style pour l'élément legend */
+#legend {
+    max-height: 200px; 
+    overflow-y: auto;
+}
+
+/* Style pour l'élément legend hidden */
+.legend-hidden {
+    display: none;
+}
+
+/* Modifier le style des étiquettes de classe dans la légende */
+.legend-item {
+    font-size: 12px;
+}
+
+/* Style des rectangles de couleurs */
+.legend-color {
+    width: 20px; 
+    height: 12px;
+    display: inline-block;
+    margin-right: 5px; 
+}
+
