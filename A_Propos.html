@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>La phénologie</title>
+
+    <style>
+        body {
+            background-color: rgb(244, 241, 241);
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Styles pour le conteneur des onglets */
+        .tabs-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 999;
+            display: flex;
+            flex-direction: row;
+            gap: 0;
+            justify-content: flex-end;
+            padding: 0px; 
+        }
+
+        /* Styles pour chaque onglet */
+        .tab {
+            background-color: rgba(122, 126, 123, 0.95);
+            color: rgb(15, 14, 14);
+            padding: 10px;
+            font-family: Calibri, sans-serif;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            text-align: center;
+            width: 200px;
+            height: 15px;
+        }
+
+        /* Styles pour l'onglet en survol */
+        .tab:hover {
+            background-color: #5c765c;
+        }
+
+        /* Styles pour le titre */
+        .titre {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            padding: 10px;
+            text-align: center; /* Centre le texte horizontalement */
+            background-color: rgba(122, 126, 123, 0.95); /*La couleur de fond*/
+            font-family: Calibri, sans-serif; /* La police d'écriture, t'es la meilleure calibri */
+            font-size: 24px; /*La taille de la police*/
+            font-weight: bold;/*En gras*/
+            color: rgb(15, 14, 14); /*Et la couleur*/
+            z-index: 1;
+        }
+
+        .icone-avant::before,
+        .icone-apres::before {
+            content: ""; /* On laisse vide pour que les icônes puissent s'afficher*/
+            display: inline-block; /* On affiche les icônes en ligne avec le texte */
+            width: 40px;
+            height: 40px; 
+            background-size: contain; /* On ajuste la taille de l'icône pour qu'elle s'adapte au conteneur */
+            background-repeat: no-repeat; /* On empêche la répétition de l'icône */
+            vertical-align: middle; /* On aligne verticalement les icônes au milieu du texte */
+        }
+
+        .icone-avant::before {
+            background-image: url('https://raw.githubusercontent.com/salem139/Ph-nologies/main/arbre.png'); /* Chemin vers l'icône */
+            margin-right: 2px; /* Espace entre l'icône avant et le texte */
+        }
+
+        .icone-apres::before {
+            background-image: url('https://raw.githubusercontent.com/salem139/Ph-nologies/main/arbre.png'); 
+            margin-left: 2px; 
+        }
+
+        .sous-titre {
+            text-align: center;
+            font-family: Calibri, sans-serif;
+            font-weight: bold;
+            font-size: 28px;
+            margin-top: 100px;
+        }
+
+        .sous-sous-titre {
+            text-align: center;
+            font-family: Calibri, sans-serif;
+            font-size: 20px;
+            margin-top: 20px; 
+            font-style: italic;
+        }
+
+        .paragraphe {
+            font-family: Calibri, sans-serif;
+            font-size: 16px;
+            margin: 20px 100px; /* On ajoute une marge de 20px en haut et 100px à gauche et à droite */
+            text-align: justify; /* Permet de justifier le texte */
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+
+    <div class="titre">
+        <strong>
+            <span class="icone-avant"></span> La phénologie des arbres urbains en 2022 <!-- La spécification span nous permet de préciser que l'on fait intervenir une icone, et que le lien est avec le code css-->
+            <span class="icone-apres"></span><br>Information sur le projet
+        </strong>
+    </div>
+
+    <div class="tabs-container"> <!-- On créer une classe avec deux sous classes pour les onglets. Comme pour la page principale, nous reprenons le même style pour les onglets et le titre pour garder une continuité dans le style -->
+        <div class="tab" id="carte"><a href="./index.html">Retour à la carte</a></div>
+        <div class="tab" id="dossier"><a href="https://e.pcloud.link/publink/show?code=XZ7V1WZOxIYLi5ziHV6suorwSSC85TjJxNy">Mémoire</a></div> <!--On fait intervenir un lien pour la visualisation et le téléchargement possible du mémoire-->
+    </div>
+    
+    <!--Pour le reste des balises, nous créons une classe pour le sous-titre, le sous sous-titre et les paragraphes-->
+    <!--Nous utilisons <p> pour créer un nouveau paragraphe au sein d'un même bloc-->
+
+    <div class="sous-titre" id=" soustitre1">Introduction</div>  
+    <div class="sous-sous-titre" id="soussoustitre1">Contexte</div>
+
+    <div class="paragraphe" id="para1">
+        <p> Cette carte intéractive fait suite à mon mémoire de recherche de master 1. Ce mémoire porte sur la phénologie des arbres en 2022 sur le territoire de l'Eurométropole de Strasbourg, à travers l'étude de série temporelles d'images optiques hautes résolutions Sentinel-2 et Planet.</p>
+        <p> Plusieurs informations ont pu être mises en avant. Une comparaison des caractéristiques techniques des satellites a pu être réalisée, ainsi que la construction des métriques phénologiques à partir de l'indice de végétation du NDVI. Les métriques phénologiques sont des mesures correspondant à des périodes de développement particulier de l'arbre au cours de la saison. Le début de saison, le pic de saison et la fin de saison a été calculé sous forme de jours (ou Day of year).</p>
+        <p> Les analyses par la suite ont été réalisées pour comprendre l'impact des essences dans l'apparition de ces métriques, ainsi que sur la localisation de ces arbres. L'étude avec les Local Climates Zones (LCZ) par méthode Mapuce a été entrepris pour comprendre le potentiel rôle de la morphologie urbaine, et le gradient urbain pour l'impact de la localisation par rapport au centre de Strasbourg.</p>
+    </div>
+
+    <div class="sous-sous-titre" id="soussoustitre2">Objectif</div>
+
+    <div class="paragraphe" id="para2">
+        <p>L'objectif de cette carte intéractive est de pouvoir mettre en avant les résultats obtenus à travers le mémoire de recherche. Beaucoup de résultats ont pu être trouvés et cette carte montre l'information principale du sujet, à savoir l'évolution de la phénologie au cours de l'année. La phénologie a été calculée à la fois pour la série temporelle Planet et Sentinel-2, mais seul la série Planet est visible. </p>
+        <p>Etudié la phénologie permet de mieux comprendre les cycles de vie des plantes, notamment des arbres. Ces élements peuvent servir pour les services techniques et de recherche des villes pour le suivi de sa population arborée, son entretien, la planification de l'implantation de nouvelles essence ou pour la gestion face au changement climatique. </p>
+        <p>Ces informations peuvent être également destinées pour le grand public, à la fois pour de l'information ou de la sensibilisation de l'environnement et de la meilleure compréhension de la biodiversité.</p>
+    </div>
+
+    <div class="sous-titre" id=" soustitre2">Aspects techniques</div>  
+    <div class="sous-sous-titre" id="soussoustitre3">Discussion</div>
+
+    <div class="paragraphe" id="para3">
+        <p>Plusieurs informations ont été représentées. Les limites de communes de l'eurométropole ont été représentées en pointillés noir, permettant de pouvoir se repérer au sein de la zone d'étude. On remarque également que la plupart des arbres se localisent dans la ville de Strabourg, cela est en raison de la politique d'acquisition de la donnée et de restrictions sur certaines zones (enseignements, privés etc...). </p>
+        <p>Les Locales Climates Zones par méthode mapuce ont été représentées pour ajouter une information simple a représenter et pouvant être un facteur important sur les différences phénologiques des arbres entre certaines zones. Les communes et les LCZ ont été ajoutés à la carte via des flux wms après avoir créer leurs symbologies respectivent sur Qgis. La légende affichée pour les LCZ a été construite à partir des mêmes couleurs et toponymes que le flux wms.</p>
+        <p>Le slider utilisé a pour interêt d'ajouter une intéractivité à la page et rendre les données modulables dans la visualisation par l'utilisateur. Ainsi la possibilité de ce déplacé sur un jour en particulier de l'année peut correspondre à une demande ou une curiosité de l'utilisateur et les marqueurs d'arbres se mettent à jours automatiquement. Les étiquettes au dessus de la barre du slider correspondent au dégradé de couleur mise en place pour le slider et le choix de couleur est en lien avec la thématique arborée et une symbologie cartographique cohérente.</p>
+        <p>La couche arborée n'a pas pu être utilisé sous forme de lien wms/wfs par les traitements réalisés entre le chargement de la donnée depuis un fichier geojson et sa visualisation. L'utilisation d'une couche importante en donnée n'est pas idéale pour la réactivité de la page et l'utilisation de lien wms/wfs rend l'affichage de la donnée plus rapide. Dans notre cas, l'utilisation du slider necessite quelques secondes d'attentes pour la mise à jours des couleurs des marqueurs arborées.</p>
+        <p>D'autres informations tel que le gradient urbain ou les informations sur les essences auraient pu être ajoutés et pourrait faire l'objet d'une continuité dans la construction de la carte intéractive. Ajouter un pop-up pour savoir l'identifiant de la LCZ ou encore un survol des entités d'arbres avec la visualisation des informations de l'arbres aurait rajouté plus d'informations utiles et dynamiques à notre page. Ces nouvelles fonctionnalités auraient nécessités pas nécessairement de nouvelles données car les informations sont toutes disposés dans la table attributaire de notre fichier .geojson. Des boutons auraient pu être ajoutés pour afficher/cacher les couronnes (cercles concentriques utilisé pour le gradient urbain) en fonction du scénario construit. </p>
+        <p>Le survol des entités d'arbres et l'affichage des informations (identifiant, hauteur, diamètre, essences et autres) auraient nécessité l'ouverture d'un panneau avec le résumé de ces données. La création (ou l'import de graphique) aurait été une source d'information supplémentaire et d'intéraction. Dans notre cas, le facteur limitant pouvant limiter ces fonctionalités étant le nombre d'arbres importants. </p>
+        <p>Il s'agit là d'un des nombreux avantages de la carte intéractive, l'affichage n'est pas figé et peut évoluer dans le temps. </p>
+    </div>
+
+
+    <div class="sous-sous-titre" id="soussoustitre4">Auto-critique</div>
+    <div class="paragraphe" id="para4">
+        <p>La visualisation de la donnée arborée a été un défis pour trouver la méthode la intéressante et intéractive possible. La réalisation du slider a été réussi mais la fluidité et la réactivité n'a pas été aussi bonne qu'attendu. La majorité des arbres se trouvant à Strasbourg, il aurait été judicieux de se concentrer sur seulement quelques quartiers de la ville pour obtenir une meilleure fluidité de la page, mais cela aurait été moins interréssant au vu du contexte de l'étude. Le code a été optimisé pour que la mise à jour des couleurs des marqueurs d'arbres puissent être mise à jour uniquement lorsqu'ils sont dans la fenêtre d'affichage (vu de l'utilisateur). Ce procedé à permis de réduire considérablement le temps d'attente et surtout la fluidité lorsque l'on bouge le slider. Il reste malgré tout quelques millisecondes de latente avec le fonctionnement du slider.</p>
+        <p>Pour des raisons inconnu, la carte peut fonctionner plus facilement sur google chrome que firefox lors des essais réalisés. Enfin la vue de la couche mapuce avec le bouton fonctionne très bien lorsque le fond de carte de base (light) est actif mais la couche ne s'affiche pas avec les trois autres fonds de cartes. Il peut s'agir d'une amélioration future pour rendre la carte encore plus fonctionnelle pour l'aspect technique en plus des aspects thématiques.</p>
+    </div>
+
+    <script>
+    </script>
+    
+</body>
+
+</html>
